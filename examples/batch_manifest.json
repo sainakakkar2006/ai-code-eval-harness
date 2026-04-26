@@ -1,0 +1,21 @@
+{
+  "suite": "sample-agent-submissions",
+  "jobs": [
+    {
+      "id": "two-sum-buggy",
+      "problem": "../problems/two_sum",
+      "submission": "../submissions/two_sum_buggy.py"
+    },
+    {
+      "id": "normalize-event-reference",
+      "problem": "../problems/normalize_event",
+      "submission": "../problems/normalize_event/solution.py"
+    },
+    {
+      "id": "dependency-order-reference",
+      "problem": "../problems/dependency_order",
+      "submission": "../problems/dependency_order/solution.py"
+    }
+  ]
+}
+
