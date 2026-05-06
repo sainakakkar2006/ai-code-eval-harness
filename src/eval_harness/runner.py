@@ -103,17 +103,30 @@ def evaluate_batch(
     manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
     base_dir = manifest_file.parent
     results = []
+    possible_points = 0.0
+    earned_points = 0.0
 
     for job in manifest["jobs"]:
         problem = _resolve_from_manifest(base_dir, job["problem"])
         submission = _resolve_from_manifest(base_dir, job["submission"])
+        points = _read_job_points(job)
         result = evaluate_submission(
             problem,
             submission,
             timeout_seconds=int(job.get("timeout_seconds", timeout_seconds)),
             python_executable=python_executable,
         )
-        results.append(result.to_dict() | {"id": job.get("id", result.problem)})
+        earned = points if result.status == "passed" else 0.0
+        possible_points += points
+        earned_points += earned
+        results.append(
+            result.to_dict()
+            | {
+                "id": job.get("id", result.problem),
+                "points": _format_points(points),
+                "earned_points": _format_points(earned),
+            }
+        )
 
     passed = sum(1 for result in results if result["status"] == "passed")
     return {
@@ -121,6 +134,9 @@ def evaluate_batch(
         "total": len(results),
         "passed": passed,
         "failed": len(results) - passed,
+        "possible_points": _format_points(possible_points),
+        "earned_points": _format_points(earned_points),
+        "score_percent": _score_percent(earned_points, possible_points),
         "results": results,
     }
 
@@ -151,3 +167,19 @@ def _resolve_from_manifest(base_dir: Path, value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else (base_dir / path).resolve()
 
+
+def _read_job_points(job: dict[str, Any]) -> float:
+    points = float(job.get("points", 1))
+    if points < 0:
+        raise ValueError("Job points cannot be negative")
+    return points
+
+
+def _score_percent(earned_points: float, possible_points: float) -> float:
+    if possible_points == 0:
+        return 0.0
+    return round((earned_points / possible_points) * 100, 2)
+
+
+def _format_points(points: float) -> int | float:
+    return int(points) if points.is_integer() else round(points, 2)

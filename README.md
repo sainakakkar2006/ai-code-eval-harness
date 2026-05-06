@@ -64,6 +64,19 @@ Run a batch of submissions:
 eval-harness batch --manifest examples/batch_manifest.json --out reports/batch.json
 ```
 
+The batch manifest can also include points for each job:
+
+```json
+{
+  "id": "dependency-order-reference",
+  "problem": "../problems/dependency_order",
+  "submission": "../problems/dependency_order/solution.py",
+  "points": 5
+}
+```
+
+That makes the output more like a small autograder because the final report includes `earned_points`, `possible_points`, and `score_percent`.
+
 ## Example Report
 
 The report is written in JSON. JSON is just a structured text format that programs can read easily.
@@ -81,6 +94,21 @@ The report is written in JSON. JSON is just a structured text format that progra
 
 This means the submission was tested on `two_sum`, but one test failed.
 
+For batch runs, the report also shows the score:
+
+```json
+{
+  "suite": "sample-agent-submissions",
+  "passed": 2,
+  "failed": 1,
+  "earned_points": 8,
+  "possible_points": 10,
+  "score_percent": 80.0
+}
+```
+
+This is useful when different problems are worth different amounts.
+
 ## Why I Made This
 
 I wanted a project that connects to testing, coding challenges, and AI code evaluation. It helped me practice:
@@ -90,6 +118,7 @@ I wanted a project that connects to testing, coding challenges, and AI code eval
 - using temporary folders
 - running another command from Python
 - creating simple JSON reports
+- adding points-based scoring
 - organizing a project so someone else can understand it
 
 ## Running Tests
@@ -97,4 +126,3 @@ I wanted a project that connects to testing, coding challenges, and AI code eval
 ```bash
 pytest
 ```
-

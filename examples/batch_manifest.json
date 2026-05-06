@@ -4,18 +4,20 @@
     {
       "id": "two-sum-buggy",
       "problem": "../problems/two_sum",
-      "submission": "../submissions/two_sum_buggy.py"
+      "submission": "../submissions/two_sum_buggy.py",
+      "points": 2
     },
     {
       "id": "normalize-event-reference",
       "problem": "../problems/normalize_event",
-      "submission": "../problems/normalize_event/solution.py"
+      "submission": "../problems/normalize_event/solution.py",
+      "points": 3
     },
     {
       "id": "dependency-order-reference",
       "problem": "../problems/dependency_order",
-      "submission": "../problems/dependency_order/solution.py"
+      "submission": "../problems/dependency_order/solution.py",
+      "points": 5
     }
   ]
 }
-

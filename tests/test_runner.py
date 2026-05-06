@@ -45,6 +45,7 @@ def test_evaluate_batch_aggregates_results(tmp_path):
                         "id": "reference",
                         "problem": str(Path("problems/normalize_event").resolve()),
                         "submission": str(Path("problems/normalize_event/solution.py").resolve()),
+                        "points": 3,
                     }
                 ],
             }
@@ -57,3 +58,41 @@ def test_evaluate_batch_aggregates_results(tmp_path):
     assert report["suite"] == "unit"
     assert report["passed"] == 1
     assert report["failed"] == 0
+    assert report["earned_points"] == 3
+    assert report["possible_points"] == 3
+    assert report["score_percent"] == 100.0
+    assert report["results"][0]["earned_points"] == 3
+
+
+def test_evaluate_batch_scores_failed_jobs_as_zero(tmp_path):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "suite": "mixed",
+                "jobs": [
+                    {
+                        "id": "reference",
+                        "problem": str(Path("problems/normalize_event").resolve()),
+                        "submission": str(Path("problems/normalize_event/solution.py").resolve()),
+                        "points": 4,
+                    },
+                    {
+                        "id": "buggy",
+                        "problem": str(Path("problems/two_sum").resolve()),
+                        "submission": str(Path("submissions/two_sum_buggy.py").resolve()),
+                        "points": 2,
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    report = evaluate_batch(manifest, timeout_seconds=5)
+
+    assert report["passed"] == 1
+    assert report["failed"] == 1
+    assert report["earned_points"] == 4
+    assert report["possible_points"] == 6
+    assert report["score_percent"] == 66.67
