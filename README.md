@@ -1,25 +1,32 @@
 # AI Code Evaluation Harness
 
-I made this project to understand how coding websites and AI coding benchmarks check whether a submitted solution is correct.
+**Name:** Saina Kakkar
 
-The basic idea is simple:
+## Design and Implementation
 
-1. Pick a programming problem.
-2. Give the tool a submitted Python file.
-3. Run that file against tests.
-4. Print a report that says what passed and what failed.
+I made this project to understand how coding websites and AI coding
+benchmarks check whether a submitted solution is correct. The basic idea is
+simple: pick a programming problem, give the tool a submitted Python file,
+run that file against tests, and print a report that says what passed and
+what failed. It is a small version of the kind of system used by coding
+challenge sites, class autograders, or AI code evaluation tools.
 
-This is a small version of the kind of system used by coding challenge sites, class autograders, or AI code evaluation tools.
+```
+submission.py ──► temp folder ──► copy in problem tests ──► pytest ──► JSON report
+                  (as solution.py)
+```
 
-## What I Built
+When the evaluator runs, it creates a temporary folder, copies the submitted
+file into that folder as `solution.py`, copies the problem tests in next to
+it, runs `pytest`, and saves the result as a report. I copied every
+submission as `solution.py` because the tests can then always import the
+same file name. Without that rename, every problem's tests would need to
+know the submission's filename in advance, which gets messy fast.
 
-This repo has three sample problems:
+## Files
 
-- `two_sum`
-- `normalize_event`
-- `dependency_order`
-
-Each problem has:
+The repo has three sample problems: `two_sum`, `normalize_event`, and
+`dependency_order`. Each problem folder contains:
 
 - a `README.md` explaining the problem
 - `starter.py` with unfinished starter code
@@ -28,25 +35,14 @@ Each problem has:
 
 The evaluator code is in `src/eval_harness/`.
 
-## How It Works
+## Run
 
-When I run the evaluator, it:
-
-1. Creates a temporary folder.
-2. Copies the submitted file into that folder as `solution.py`.
-3. Copies the problem tests into that folder.
-4. Runs `pytest`.
-5. Saves the result as a report.
-
-I copied every submission as `solution.py` because the tests can then always import the same file name. That keeps the testing process simpler.
-
-## Quick Start
+Setup:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
-pytest
 ```
 
 Run one submission:
@@ -75,11 +71,12 @@ The batch manifest can also include points for each job:
 }
 ```
 
-That makes the output more like a small autograder because the final report includes `earned_points`, `possible_points`, and `score_percent`.
+That makes the output more like a small autograder, because the final report
+includes `earned_points`, `possible_points`, and `score_percent`.
 
 ## Example Report
 
-The report is written in JSON. JSON is just a structured text format that programs can read easily.
+Running the bundled buggy submission against `two_sum` produces this:
 
 ```json
 {
@@ -92,9 +89,9 @@ The report is written in JSON. JSON is just a structured text format that progra
 }
 ```
 
-This means the submission was tested on `two_sum`, but one test failed.
-
-For batch runs, the report also shows the score:
+Three tests pass and one fails. That is what a partially-correct submission
+looks like, and it is why the report counts individual tests instead of
+giving a single yes/no. For batch runs, the report also shows the score:
 
 ```json
 {
@@ -109,20 +106,18 @@ For batch runs, the report also shows the score:
 
 This is useful when different problems are worth different amounts.
 
-## Why I Made This
-
-I wanted a project that connects to testing, coding challenges, and AI code evaluation. It helped me practice:
-
-- writing tests
-- building a command-line tool
-- using temporary folders
-- running another command from Python
-- creating simple JSON reports
-- adding points-based scoring
-- organizing a project so someone else can understand it
-
-## Running Tests
+## Verify
 
 ```bash
 pytest
 ```
+
+## Notes
+
+Could've stopped at pass/fail per submission, but adding points-based
+scoring to the batch runner made the output feel like a real autograder
+instead of a test wrapper. I wanted a project that connects to testing,
+coding challenges, and AI code evaluation, and it helped me practice writing
+tests, building a command-line tool, using temporary folders, running
+another command from Python, creating JSON reports, and organizing a project
+so someone else can understand it.
