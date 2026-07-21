@@ -1,4 +1,4 @@
-# AI Code Evaluation Harness
+# ai-code-eval-harness
 
 **Name:** Saina Kakkar
 
@@ -33,7 +33,10 @@ The repo has three sample problems: `two_sum`, `normalize_event`, and
 - `solution.py` with a correct solution
 - a `tests/` folder with pytest tests
 
-The evaluator code is in `src/eval_harness/`.
+There is also `submissions/two_sum_buggy.py`, a deliberately wrong
+submission you can use to see what a failing report looks like. The
+evaluator code is in `src/eval_harness/` (`runner.py` does the work,
+`cli.py` is the interface).
 
 ## Run
 
@@ -59,6 +62,30 @@ Run a batch of submissions:
 ```bash
 eval-harness batch --manifest examples/batch_manifest.json --out reports/batch.json
 ```
+
+## CLI Reference
+
+`eval-harness run` evaluates a single submission:
+
+| Argument | Default | What it does |
+|---|---|---|
+| `--problem` | (required) | Problem directory |
+| `--submission` | (required) | Candidate Python file |
+| `--timeout` | `10` | Per-run timeout in seconds |
+| `--out` | none | Write the JSON report to a file |
+
+`eval-harness batch` evaluates jobs from a manifest:
+
+| Argument | Default | What it does |
+|---|---|---|
+| `--manifest` | (required) | Batch manifest JSON |
+| `--timeout` | `10` | Default per-run timeout |
+| `--out` | none | Write the JSON report to a file |
+
+The timeout matters more than it looks. A submission with an infinite loop
+would otherwise hang the whole batch. Ten seconds is generous for these
+problems, and a submission that hits it is reported as failed rather than
+waited on forever.
 
 The batch manifest can also include points for each job:
 
@@ -114,10 +141,14 @@ pytest
 
 ## Notes
 
-Could've stopped at pass/fail per submission, but adding points-based
-scoring to the batch runner made the output feel like a real autograder
-instead of a test wrapper. I wanted a project that connects to testing,
+At first the batch runner only reported pass/fail. Adding points-based
+scoring made the output feel like a real autograder instead of a test
+wrapper. I wanted a project that connects to testing,
 coding challenges, and AI code evaluation, and it helped me practice writing
 tests, building a command-line tool, using temporary folders, running
 another command from Python, creating JSON reports, and organizing a project
 so someone else can understand it.
+
+## License
+
+MIT. See the [LICENSE](LICENSE) file.
